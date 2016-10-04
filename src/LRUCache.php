@@ -1,7 +1,6 @@
 <?php
 
 namespace LRUCache;
-use phpDocumentor\Reflection\Types\Array_;
 
 /**
  * Created by PhpStorm.
@@ -11,18 +10,8 @@ use phpDocumentor\Reflection\Types\Array_;
  */
 class LRUCache
 {
-    private $_max;
-    private $_dictionary;
-
-    public function getMax(){
-        return $this->_max;
-    }
-
-    public function accessCache(){
-        return $this->_dictionary;
-    }
-
-
+    public $_max;
+    public $_dictionary;
     /*
      * LRUCache constructor.
      */
@@ -35,27 +24,28 @@ class LRUCache
 
     public function put($string){
         //find in cache
-        $item = $this->find($string);
-        $cache = $this->accessCache();
 
-        if ($item == null){
-            array_pop($cache);
-            array_unshift($cache,$string);
+        if (in_array($string,$this->_dictionary)){
+            $item = $this->find($string);
+            array_splice($this->_dictionary,$item,1);
+            array_unshift($this->_dictionary,$string);
+            //echo '|found |';
+
         }
         else{
-            array_splice($cache,$item,$item+1);
-            array_unshift($cache,$string);
+            array_pop($this->_dictionary);
+            array_unshift($this->_dictionary,$string);
+            //echo '|not found |';
         }
-
 
     }
 
     public function find($string){
-        return array_search($string,$this->accessCache());
+        return array_search($string,$this->_dictionary);
     }
 
     public function peek(){
-        $cache = $this->accessCache();
+        $cache = $this->_dictionary;
         return $cache[0];
     }
 }

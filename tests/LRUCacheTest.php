@@ -19,10 +19,10 @@ class LRUCacheTest extends PHPUnit_Framework_TestCase
         //The cache size should be configurable, but need not be changed after construction.
 
         //Arrange
-        $Size = 3;
+        $Size = 100;
         $LRUCache = new LRUCache($Size);
         //Act
-        $Max = $LRUCache->getMax();
+        $Max = $LRUCache->_max;
 
         //Assert
         $this->assertEquals($Size,$Max,'The maximum size is not the same as the size passed to the constructor');
@@ -36,18 +36,47 @@ class LRUCacheTest extends PHPUnit_Framework_TestCase
         $LRUCache = new LRUCache(3);
 
         //Act
-        $LRUCache->put("Foo");
         $LRUCache->put("Bar");
-        $LRUCache->put("Baz");
+        $LRUCache->put("Bar");
+        $LRUCache->put("Foo");
 
-        $this->assertEquals($LRUCache->peek(),"Bar");
+        $this->assertEquals($LRUCache->peek(),"Foo",'The latest inserted item is not first in the list');
     }
 
-    public function testWhenItemIsPlacedInCacheItIsMovedToTheTop(){
-        throw new BadMethodCallException();
+    public function testWhenItemIsPlacedInCacheItIsMovedToTheTopAndNotDuplicated(){
+        //Arrange
+        $LRUCache = new LRUCache(6);
+        $LRUCache->put("Bar");
+        $LRUCache->put("Baz");
+        $LRUCache->put("Foo");
+        $LRUCache->put("Bar");
+        $LRUCache->put("Bar");
+        $LRUCache->put("Bar");
+        $LRUCache->put("Bar");
+        $LRUCache->put("Bar");
+        $LRUCache->put("Bar");
+
+
+        //Act
+        var_dump($LRUCache->_dictionary);
+        $instances = array_count_values($LRUCache->_dictionary);
+        //var_dump($instances['Bar']);
+
+        //Assert
+        $this->assertEquals(true,$instances['Bar'] == 1,'The Cache has duplicates of the same arbitrary string');
     }
 
     public function testCacheDoesNotStoreMoreThanMaximumSize(){
-        throw new BadMethodCallException();
+        $size = 1;
+        $LRUCache = new LRUCache($size);
+
+        $LRUCache->put("Bar");
+        $LRUCache->put("Bar");
+        $LRUCache->put("Bar");
+        $LRUCache->put("Bar");
+
+        $this->assertTrue(sizeof($LRUCache)==1,'Size exceeds bounds set for cache');
+
+
     }
 }
