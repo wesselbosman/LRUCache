@@ -58,7 +58,7 @@ class LRUCacheTest extends PHPUnit_Framework_TestCase
 
 
         //Act
-        var_dump($LRUCache->_dictionary);
+        //var_dump($LRUCache->_dictionary);
         $instances = array_count_values($LRUCache->_dictionary);
         //var_dump($instances['Bar']);
 
